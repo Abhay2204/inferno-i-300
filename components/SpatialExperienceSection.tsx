@@ -34,13 +34,13 @@ const SpatialExperienceSection: React.FC = React.memo(() => {
       ref={sectionRef}
       className="relative w-full h-screen bg-black overflow-hidden flex flex-col items-center justify-center"
     >
-      {/* Video Background - Optimized */}
+      {/* Video Background - High Quality */}
       <video
         ref={videoRef}
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ 
           transform: 'translateZ(0)',
