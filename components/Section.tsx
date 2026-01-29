@@ -32,7 +32,7 @@ const Section: React.FC<SectionProps> = ({
     }
   }, [isInView, auraColor, onInView]);
 
-  // Split title for staggered animation
+  // Split title into words for layout
   const words = title.split(" ");
 
   return (
@@ -58,16 +58,12 @@ const Section: React.FC<SectionProps> = ({
               className="relative z-20 w-[35%] text-left items-start flex flex-col"
           >
               {words.map((word, i) => (
-                  <div key={i} className="overflow-hidden">
-                      <motion.h2
-                          initial={{ y: "100%" }}
-                          whileInView={{ y: "0%" }}
-                          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
-                          className="text-[7vw] leading-[0.8] font-black tracking-tighter uppercase text-black"
-                      >
-                          {word}
-                      </motion.h2>
-                  </div>
+                  <h2
+                      key={i}
+                      className="text-[7vw] leading-[0.8] font-black tracking-tighter uppercase text-black"
+                  >
+                      {word}
+                  </h2>
               ))}
           </motion.div>
 
@@ -119,16 +115,12 @@ const Section: React.FC<SectionProps> = ({
             } flex flex-col`}
         >
             {words.map((word, i) => (
-                <div key={i} className="overflow-hidden">
-                    <motion.h2
-                        initial={{ y: "100%" }}
-                        whileInView={{ y: "0%" }}
-                        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
-                        className="text-[10vw] leading-[0.8] font-black tracking-tighter uppercase"
-                    >
-                        {word}
-                    </motion.h2>
-                </div>
+                <h2
+                    key={i}
+                    className="text-[10vw] leading-[0.8] font-black tracking-tighter uppercase"
+                >
+                    {word}
+                </h2>
             ))}
         </motion.div>
 

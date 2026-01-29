@@ -2,25 +2,46 @@ import React, { useEffect, useRef } from 'react';
 
 const Cursor: React.FC = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>();
+  const mousePos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    const moveCursor = (e: MouseEvent) => {
-      cursor.style.left = `${e.clientX}px`;
-      cursor.style.top = `${e.clientY}px`;
+    // Store mouse position without triggering render
+    const updateMousePosition = (e: MouseEvent) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
     };
 
-    window.addEventListener('mousemove', moveCursor);
-    return () => window.removeEventListener('mousemove', moveCursor);
+    // Update cursor position using RAF for smooth 60fps
+    const updateCursorPosition = () => {
+      if (cursor) {
+        cursor.style.left = `${mousePos.current.x}px`;
+        cursor.style.top = `${mousePos.current.y}px`;
+      }
+      rafRef.current = requestAnimationFrame(updateCursorPosition);
+    };
+
+    window.addEventListener('mousemove', updateMousePosition, { passive: true });
+    rafRef.current = requestAnimationFrame(updateCursorPosition);
+
+    return () => {
+      window.removeEventListener('mousemove', updateMousePosition);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
   }, []);
 
   return (
     <div 
       ref={cursorRef} 
       className="fixed pointer-events-none z-[9999] mix-blend-difference"
-      style={{ transform: 'translate(-50%, -50%)' }}
+      style={{ 
+        transform: 'translate(-50%, -50%)',
+        willChange: 'transform'
+      }}
     >
       {/* Crosshair */}
       <div className="relative w-6 h-6">

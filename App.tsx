@@ -173,10 +173,10 @@ const App: React.FC = () => {
         <ProductSection />
       </div>
 
-      {/* ---------------- Waitlist Section ---------------- */}
-      <div id="waitlist">
+      {/* ---------------- Waitlist Section - Removed duplicate, form integrated into ProductSection ---------------- */}
+      {/* <div id="waitlist">
         <WaitlistSection />
-      </div>
+      </div> */}
 
       {/* ---------------- Club Section ---------------- */}
       <div id="club">

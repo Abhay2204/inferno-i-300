@@ -1,145 +1,120 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 
-interface Product {
-  id: number;
-  name: string;
-  edition: string;
-  price: number;
-  image: string;
-  description: string;
-}
-
 const ProductSection: React.FC = React.memo(() => {
-  const products: Product[] = useMemo(() => [
-    {
-      id: 1,
-      name: "Inferno i-300",
-      edition: "Standard",
-      price: 299,
-      image: "/assets/images/prduct0.jpeg",
-      description: "Essential gaming audio with titanium drivers and RGB lighting"
-    },
-    {
-      id: 2,
-      name: "Inferno i-300 Pro",
-      edition: "Professional",
-      price: 349,
-      image: "/assets/images/product1.png",
-      description: "Advanced ANC and premium materials for extended sessions"
-    },
-    {
-      id: 3,
-      name: "Inferno i-300 Elite",
-      edition: "Elite",
-      price: 399,
-      image: "/assets/images/product2.png",
-      description: "Spatial audio technology with wireless charging capability"
-    },
-    {
-      id: 4,
-      name: "Inferno i-300 Limited",
-      edition: "Limited Edition",
-      price: 449,
-      image: "/assets/images/product3.png",
-      description: "Hi-Res certified audio with exclusive premium accessories"
-    }
-  ], []);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = videoRef.current;
+    if (!section || !video) return;
+
+    // Play video only when section is visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {
+              // Autoplay might be blocked
+            });
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="products" className="relative bg-[#fafafa] py-24">
-      <div className="max-w-[1400px] mx-auto px-8 md:px-12">
+    <section 
+      ref={sectionRef}
+      id="products" 
+      className="relative bg-black min-h-screen flex items-center"
+    >
+      <div className="w-full max-w-[1600px] mx-auto px-8 md:px-12 py-20">
         
-        {/* Header */}
-        <div className="mb-20 text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            className="text-sm font-medium text-gray-500 mb-4 tracking-wide"
-          >
-            PRODUCT LINEUP
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            className="text-5xl md:text-6xl font-semibold text-gray-900 mb-6"
-          >
-            Choose your Inferno
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            viewport={{ once: true, margin: "-50px" }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
-          >
-            Four editions designed for different levels of performance
-          </motion.p>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true, margin: "-50px" }}
-              className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 will-change-transform"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Left - Video - Optimized for performance */}
+          <div className="relative aspect-video lg:aspect-square rounded-2xl overflow-hidden">
+            <video
+              ref={videoRef}
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover"
+              style={{ 
+                transform: 'translateZ(0)',
+                willChange: 'transform'
+              }}
             >
-              {/* Image */}
-              <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 p-8 relative overflow-hidden">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 will-change-transform"
-                />
-              </div>
+              <source src="/assets/new new.mp4" type="video/mp4" />
+            </video>
+          </div>
 
-              {/* Content */}
-              <div className="p-6">
-                <p className="text-xs font-medium text-orange-600 uppercase tracking-wider mb-2">
-                  {product.edition}
-                </p>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                  {product.description}
-                </p>
-                
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span className="text-2xl font-semibold text-gray-900">
-                    ${product.price}
-                  </span>
-                  <button className="flex items-center gap-2 text-sm font-medium text-gray-900 hover:gap-3 transition-all group/btn">
-                    <span>Buy</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+          {/* Right - Content */}
+          <div className="text-white space-y-8">
+            <div>
+              <p className="text-sm font-mono text-gray-400 mb-4 tracking-widest uppercase">
+                Ultra Gaming Experience
+              </p>
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6">
+                Inferno Ultra Gaming X
+              </h2>
+              <p className="text-xl text-gray-300 leading-relaxed mb-8">
+                The ultimate gaming headset engineered for champions. Experience unmatched audio clarity, 
+                zero-latency wireless, and all-day comfort in one revolutionary package.
+              </p>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2" />
+                <div>
+                  <h3 className="text-lg font-bold mb-1">50mm Titanium Drivers</h3>
+                  <p className="text-gray-400">Crystal-clear audio with deep bass response</p>
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2" />
+                <div>
+                  <h3 className="text-lg font-bold mb-1">Active Noise Cancellation</h3>
+                  <p className="text-gray-400">Block out distractions, focus on victory</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2" />
+                <div>
+                  <h3 className="text-lg font-bold mb-1">30-Hour Battery Life</h3>
+                  <p className="text-gray-400">Game all day without interruption</p>
+                </div>
+              </div>
+            </div>
 
-        {/* Footer CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          className="mt-16 text-center"
-        >
-          <p className="text-sm text-gray-600 mb-4">
-            Need help choosing? <a href="#" className="text-gray-900 font-medium underline">Compare all models</a>
-          </p>
-        </motion.div>
+            {/* CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <button className="px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                <span>Pre-Order Now</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button className="px-8 py-4 border border-white/20 text-white rounded-full font-bold hover:bg-white/10 transition-colors">
+                Learn More
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-500">
+              Starting at $399 • Ships Q2 2026
+            </p>
+          </div>
+
+        </div>
       </div>
     </section>
   );
